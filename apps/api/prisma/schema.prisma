@@ -8,19 +8,92 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+model SocialLink {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  github    String?
+  instagram String?
+  facebook  String?
+  user      User?
 }
 
 model Post {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  videoUrl  String?
+  thumbnail String?
+  pptUrl    String?
+  images    String[]
+  title     String
+  content   String
+  author    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  class     Class?   @relation(fields: [classId], references: [id])
+  classId   String?  @db.ObjectId
 }
 
-model Test {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+model Class {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  name           String @unique
+  profilePicture String
+  description    String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  userClasses    UserClass[]
+  posts          Post[]
 }
 
-model TestTest {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+model UserClass {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @db.ObjectId
+  classId String @db.ObjectId
+
+  user  User  @relation(fields: [userId], references: [id])
+  class Class @relation(fields: [classId], references: [id])
+
+  @@unique([userId, classId])
+}
+enum Role {
+  ADMIN
+  CLASS_ADMIN
+  STUDENT
+}
+
+model User {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  username       String      @unique
+  displayName    String
+  email          String      @unique
+  phone          String?
+  bio            String?
+  profilePicture String?
+  role           Role      @default(STUDENT)
+  socialLink     SocialLink? @relation(fields: [socialLinkId], references: [id])
+  socialLinkId   String?     @unique @db.ObjectId
+  userClasses    UserClass[]
+  password       String?
+  account        Account[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }

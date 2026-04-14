@@ -1,0 +1,5 @@
+$kind: http-request
+name: New Request
+url: https://localhost:3333/api/file-upload
+method: GET
+order: 1776157908923

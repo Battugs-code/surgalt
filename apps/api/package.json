@@ -62,12 +62,19 @@
   },
   "dependencies": {
     "@apollo/server": "^5.5.0",
+    "@as-integrations/express4": "^1.1.2",
+    "@aws-sdk/client-s3": "^3.1029.0",
+    "@aws-sdk/s3-request-presigner": "^3.1029.0",
     "@prisma/client": "6.19",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "multer": "^2.1.1"
   },
   "devDependencies": {
+    "@types/multer": "^2.1.0",
     "@types/node": "^20.19.9",
+    "i": "^0.3.7",
+    "npm": "^11.12.1",
     "prisma": "6.19"
   }
 }
