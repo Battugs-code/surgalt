@@ -1,15 +1,24 @@
 import { Request, Response } from 'express';
 import { loginService, registerService } from './authServices';
 
-export const loginController = (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  loginService({ email, password });
+export const loginController = async (req: Request, res: Response) => {
+  const { password, username } = req.body;
+  if (!username || !password) {
+    res.status(400).json({ message: 'Username and password are required' });
+    return;
+  }
+  try {
+    const token = await loginService({ password, username });
+    res.json({ token });
+  } catch (e: any) {
+    res.status(401).json({ message: e.message });
+  }
 };
 
 export const registerController = async (req: Request, res: Response) => {
   const { email, password, username, displayName, phone, bio, profilePicture } =
     req.body;
-  if (!email || !password || !username) {
+  if (!email || !password || !username || !displayName) {
     res.json({ message: 'All fields are required' });
     return;
   }
